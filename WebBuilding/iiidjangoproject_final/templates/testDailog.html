@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<HTML>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Dialog</title>
+		<style>
+			#create-user{
+			-moz-border-radius: 300px;
+			-webkit-border-radius: 300px;
+			 border-radius: 300px;
+			 border-color:rgba(255,255,255,0.1);
+			 width: 250px;
+			 line-height: 120px;
+			 height: 250px;
+			 padding: 0px;
+			 border-width: 4px;
+			 font-size: 30px; 
+			 position:absolute;
+			 top:55%;
+			 left:55%;
+			 color:black;
+			 text-align:center;
+			 text-shadow: 4px -2px;
+			 background:rgba(255,255,255,0.1);
+			 opacity:0.8;
+			}
+			#create-user {
+			  letter-spacing: 0;
+			}
+
+			#create-user:hover,
+			#create-user:active {
+			
+			 -moz-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(255, 255, 255, 0.15), 0px 7px 0px #b56a04, 0px 8px 3px rgba(0, 0, 0, 0.3);
+			-webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(255, 255, 255, 0.15), 0px 7px 0px #b56a04, 0px 8px 3px rgba(0, 0, 0, 0.3);
+			box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(255, 255, 255, 0.15), 0px 7px 0px #b56a04, 0px 8px 3px rgba(0, 0, 0, 0.3);
+			background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZhYTAyNCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2VjOGEwNSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+			background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #faa024), color-stop(100%, #ec8a05));
+			background: -moz-linear-gradient(top, #faa024, #ec8a05);
+			background: -webkit-linear-gradient(top, #faa024, #ec8a05);
+			background: linear-gradient(to bottom, #faa024, #ec8a05);
+			background-color: #fba42e;
+			color: #FFFFFF; 
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			border-color: black;
+			-webkit-transition: width 350ms ease-in-out;
+			transition: width 350ms ease-in-out;
+			bottom: auto;
+			top: 55%;
+			letter-spacing: 5px;
+			}
+
+			#create-user:after,
+			#create-user:before {
+			  -webkit-backface-visibility: hidden;
+					  backface-visibility: hidden;
+			  border: 1px solid rgba(255, 255, 255, 0);
+			  bottom: 0px;
+			  content: " ";
+			  display: block;
+			  margin: 0 auto;
+			  position: relative;
+			  -webkit-transition: all 280ms ease-in-out;
+					  transition: all 280ms ease-in-out;
+			  width: 0;
+			}
+
+			#create-user:hover:after,
+			#create-user:hover:before {
+			  -webkit-backface-visibility: hidden;
+					  backface-visibility: hidden;
+			  border-color: black;
+			  -webkit-transition: width 350ms ease-in-out;
+					  transition: width 350ms ease-in-out;
+			  width: 70%;
+			}
+
+			#create-user:active, #create-user.is-active, #create-user.active {
+			-moz-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(255, 255, 255, 0.15), 0px 2px 0px #bf7004, 0px 3px 3px rgba(0, 0, 0, 0.3);
+			-webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(255, 255, 255, 0.15), 0px 2px 0px #bf7004, 0px 3px 3px rgba(0, 0, 0, 0.3);
+			box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(255, 255, 255, 0.15), 0px 2px 0px #bf7004, 0px 3px 3px rgba(0, 0, 0, 0.3);
+			background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U3ODcwNSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZhOTMwNiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+			background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e78705), color-stop(100%, #fa9306));
+			background: -moz-linear-gradient(top, #e78705, #fa9306);
+			background: -webkit-linear-gradient(top, #e78705, #fa9306);
+			background: linear-gradient(to bottom, #e78705, #fa9306);
+			background-color: #d8891e;
+			color: #8d5303;
+			border: 1px solid #d87e04;
+			top: 57%;
+						
+			}
+			
+			#tag{
+				float:left;	
+			}
+			#tag1{
+				margin: 10px;
+				width:500;
+				height:480;
+				float:left;	
+			}
+			fieldset{
+				border:none;
+				padding:0;
+				margin:0;
+			}
+			label{
+				display:inline-block;
+				padding-bottom:10px;
+				width:90px;
+			}
+			#sortable { list-style-type: none; margin: 0; padding: 0; width: 80%; }
+			#sortable li { margin: 0 6px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+			#sortable li span { position: absolute; margin-left: -1.3em; }
+			
+			input[type="checkbox"]{
+				 display: none;
+			}
+			input[type="radio"] {
+					display: none;
+			}
+			label {
+			  cursor:pointer;
+			  color: #555;
+			} 
+			input[type="radio"]:checked + label {
+			  color: #FBAF29;
+			}
+			input[type="radio"] + label span {
+				display: inline-block;
+				vertical-align: middle;
+				width:5px;
+				height: 45px;
+			}
+
+			input[type="radio"] + label span {
+			  background: url(http://sarasoueidan.com/images/checkbox-radio-sprite.png) -105px center no-repeat;
+			}
+
+			input[type="radio"]:checked + label span {
+				background: url(http://sarasoueidan.com/images/checkbox-radio-sprite.png) -153px center no-repeat;
+			}
+			html, body {
+			height: 80%;
+			margin: 0;
+			padding: 0;
+			}
+		  #map {
+			height: 100%;
+			}
+			 #a{
+		   font:300px facebook;
+		   opacity:0.6;
+		   color:white;
+		   text-shadow:5px 5px 10px #000;	
+		   
+		   position:absolute;
+		   top:10%;
+		   left:30%;
+		   
+		   }
+		   #b{
+		   font:400px facebook;
+		   text-shadow:5px 5px 10px #000;
+		   color:#0098FF;
+		   opacity:0.5;
+		   
+		   position:absolute;
+		   top:0%;
+		   left:43%;
+		   }
+		   #c{
+		   font:300px facebook;
+		   color:white;
+		   opacity:0.6;
+		   position:absolute;
+		   text-shadow:5px 5px 10px #000;
+		   top:10%;
+		   left:60%;
+		   }
+		   #d{
+		   font:300px facebook;
+		   opacity:0.6;
+		   position:absolute;
+		   color:white;
+		   text-shadow:5px 5px 10px #000;
+		   top:10%;
+		   left:72%;
+		   }
+		   
+		   @font-face{
+			font-family:"facebook";  
+			src:url({%static 'fonts/Ten.ttf' %});
+		   }
+		   #sub {
+			  border: 0 solid;
+			  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
+			  outline: 1px solid;
+			  outline-color: rgba(255, 255, 255, 0.5);
+			  outline-offset: 0px;
+			  text-shadow: none;
+			  -webkit-transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
+					  transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
+			}
+
+			#sub:hover {
+			  border: 1px solid;
+			  box-shadow:rgba(255, 255, 255, 0.2);
+			  text-shadow: 2px 2px 2px #427388;
+			}
+		   .ui-state-default{
+			
+			
+		   }	
+		  
+		   .buttons{
+		   position:absolute;
+		   right:9%;
+		   box-align:center;
+		   cursor:pointer; 
+		   
+		   }
+		   
+		
+		</style>
+
+		<script src="{% static 'js/d3.js'%}"></script>
+		<script src="{% static 'js/d3.layout.cloud.js'%}"></script>
+		<script type="text/javascript" src="http://www.wingzero.tw/jquery/jquery.js"></script>
+		<script type="text/javascript" src="http://www.wingzero.tw/jquery/jquery_ui/js/jquery-ui-1.8.11.custom.min.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+		<!-- <link rel="stylesheet" href="{% static 'js/main.css'%}"> -->
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_S1QYRhbyKDtJLAt3X7FlNsnjdxarxnA&callback=initMap"
+		async defer></script>
+		<script>
+			 var map;
+			  function initMap() {
+				map = new google.maps.Map(document.getElementById('map'), {
+				  center: {lat: 25.048164, lng: 121.517292},
+				  zoom: 13
+				});
+			  }
+			$(function() {
+			$( "#sortable" ).sortable();
+			$( "#sortable" ).disableSelection();
+			});
+
+			$(function() {
+				 $( "#create-user" )
+					.button()
+					.click(function() {
+						$( "#dialog" ).dialog( "open" );
+					});
+			
+			function checkLength( o, n, min, max ) {
+				if ( o.val().length > max || o.val().length < min ) {
+				o.addClass( "ui-state-error" );
+				updateTips( "Length of " + n + " must be between " +
+				min + " and " + max + "." );
+				return false;
+				} else {
+				return true;
+				}
+			}
+			
+			
+			
+				
+				 $( "#dialog" ).dialog({
+					autoOpen: false,
+					height: 860,
+					width: 1200,
+					modal: true,
+					});
+			});
+		</script>
+
+
+	</head>
+	<BODY style="background-image:url({%static 'image/23.png' %});
+				background-size: 1950px 990px;
+				">
+		<span id="a">哇</span>
+		<span id="b">北</span>
+		<span id="c">企</span>
+		<span id="d">投</span>
+		
+		<button id="create-user">Let's Go</button>
+		<div id="dialog" title="隨機行程" style="background-image:url({%static 'image/0.png' %})">
+			
+		
+				
+			
+			<fieldset>
+				
+				<div id="tag"style="width: 600px; height: 650px; border: 1px solid #000"></div>
+				<div id="tag1">
+				<form id = "form1" action="/testmap/" method="post">
+					<script type="text/javascript" src="{% static 'js/jquery.blockUI.js'%}"></script>
+					<script type="text/javascript">
+						$(document).ready(function() {
+
+							 $('#form1').submit(function() 
+								{
+									$.blockUI({ message: "<img src='{% static 'js/loading.gif' %}'/>"
+									});
+								});
+							});
+					</script>
+					<div style="width: 520px; height: 500px; border: 1px solid #000" align="center">
+						<ul type="circle" id="sortable" height="80px">
+						</ul>
+					</div>
+					<label for="bookdate">日期：</label>
+					<input type="date" id="bookdate" name="date" value="2016-02-25" min="2016-02-05" max="2016-2-29">
+					</br>
+					出發時間:
+					<select name="start_hour">
+						<option value="7"></option>
+						<option value="7">早上7</option>
+						<option value="8">早上8</option>
+						<option value="9">早上9</option>
+						<option value="10">早上10</option>
+						<option value="11">早上11</option>
+						<option value="12">中午12</option>
+						<option value="13">下午1</option>
+						<option value="14">下午2</option>
+						<option value="15">下午3</option>
+						<option value="16">下午4</option>
+						<option value="17">下午5</option>
+						<option value="18">晚上6</option>
+						<option value="19">晚上7</option>
+						<option value="20">晚上8</option>
+					</select>
+					點
+					<select name="start_minute">
+						<option value="0"></option>
+						<option value="30">30</option>
+						<option value="0">00</option>
+					</select>
+					分
+					</br>
+					結束時間:
+					<select name="end_hour">
+						<option value="7"></option>
+						<option value="8">早上8</option>
+						<option value="9">早上9</option>
+						<option value="10">早上10</option>
+						<option value="11">早上11</option>
+						<option value="12">中午12</option>
+						<option value="13">下午1</option>
+						<option value="14">下午2</option>
+						<option value="15">下午3</option>
+						<option value="16">下午4</option>
+						<option value="17">下午5</option>
+						<option value="18">晚上6</option>
+						<option value="19">晚上7</option>
+						<option value="20">晚上8</option>
+						<option value="21">晚上9</option>
+					</select>
+					點
+					<select name="end_minute">
+						<option value="0"></option>
+						<option value="30">30</option>
+						<option value="0">00</option>
+					</select>
+					分
+					</br>
+					玩多久?
+					<input type="radio" name="time" id="radio1" value="3" />
+				    <label for="radio1"> <span></span> 深度玩 </label>
+				    <input type="radio" name="time" id="radio2"value="2"/>
+					<label for="radio2"> <span></span>正常玩</label>
+					<input type="radio" name="time" id="radio3"value="1"/>
+					<label for="radio3"> <span></span> 隨意玩 </label>
+					</br>
+					熱門度:
+					<input type="radio" name="hot" id="radio-option-1" value="3" />
+				    <label for="radio-option-1"> <span></span> 熱門 </label>
+				    <input type="radio" name="hot" id="radio-option-2"value="2"/>
+					<label for="radio-option-2"> <span></span> 普通 </label>
+					<input type="radio" name="hot" id="radio-option-3"value="1"/>
+					<label for="radio-option-3"> <span></span> 冷門 </label>
+					</br>
+				<input id="sub" style="width:100px;height:50px; font-family:微軟正黑體;background-color:#feffb8;border-radius:5px;" type=submit value="送出">
+				
+				
+				</form>
+				</div>
+			</fieldset>
+		
+		</div>  
+		<script>
+			(function() {
+			  var fill = d3.scale.category20();
+			  //要顯示於標籤雲的資料內容
+			  var data = [
+					{% for i in taga %}
+						{
+						text :"{{i.T_name}}",
+						size :{{i.T_count}},
+						tag : '{{i.id}}'
+						},
+					{% endfor %}
+					 ];
+			  d3.layout.cloud().size([ 600, 600 ]).words(data).padding(6).rotate(
+				  0).font('"微軟正黑體",Impact').fontSize(function(d) {
+				return d.size;
+			  }).on("end", draw).start();
+
+			  function draw(words) {
+				var output='';
+				d3.select("#tag") //要插入標籤雲的tag id
+				.append("svg").attr("width", 600).attr("height", 600)
+				.append("g").attr("transform", "translate(300,300)") //這裡的值要對應到繪圖區域的寬、高的一半，針對不同的瀏覽器要設可以使用的值，如Chrome為-webkit-transform
+				.selectAll("text").data(words).enter().append("text")
+				.style("font-size", function(d) {
+					  return d.size + "px";
+					})
+				.style("font-family", '"微軟正黑體",Impact')
+				.style("cursor", 'pointer')
+				.style("fill", function(d, i) {
+				  return fill(i);
+				}).attr("text-anchor", "middle")
+				.attr("transform",//跟上面的transform一樣，需依不同的瀏覽器設定對應的值
+					function(d) {
+					  return "translate(" + [ d.x, d.y ] + ")rotate(" + d.rotate + ")";
+					})
+				.text(function(d) {
+				  return d.text;
+				}).on('click', function(d) {
+				  $("#sortable").append("<li class='ui-state-default' id = 'li" + d.tag +"'><span class='ui-icon ui-icon-arrowthick-2-n-s'></span><input type='checkbox' name='id' value='"+d.tag+"' checked='checked' >"+d.text+"<span type='button' style='position:absolute;right:9%; height:28px;cursor:pointer; ' onclick='myFunction()'>X</span></li>")
+				});
+				
+			  }
+			}());
+			function myFunction() {
+				{% for i in taga %}
+				$('#li{{i.id}}').click(function(){
+					$('#li{{i.id}}').remove();	
+				})
+				{% endfor %}
+			}
+		</script>
+	</BODY>
+</HTML>

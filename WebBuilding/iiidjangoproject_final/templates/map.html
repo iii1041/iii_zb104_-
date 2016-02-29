@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Place Autocomplete</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      #panel{ background-color:#8C95A0; position:absolute; top:0; left:0; bottom:0; width:300px; }
+      #map{ background:red; position:absolute; top:0; left:300px; right:0; bottom:0; }
+   
+
+
+
+    </style>
+    </head>
+    <body>
+		<div id="dialog" title="Basic dialog">
+		  <p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+		</div>
+		<div id="map"></div>
+		<div id="panel"></div>
+		<script>
+		//初始	  
+			function initMap() {
+			var origin_place_id = null;
+			var destination_place_id = null;
+			var travel_mode = google.maps.TravelMode.WALKING;
+		  
+			var map = new google.maps.Map(document.getElementById('map'), {
+			mapTypeControl: false,
+			center: new google.maps.LatLng(23, 122),
+			zoom: 13,
+			draggableCursor: 'auto',
+			draggingCursor: 'move',
+			disableDoubleClickZoom: true,
+			styles: [{"featureType":"landscape","stylers":[{"saturation":-100},{"lightness":65},{"visibility":"on"}]},{"featureType":"poi","stylers":[{"saturation":-100},{"lightness":51},{"visibility":"simplified"}]},{"featureType":"road.highway","stylers":[{"saturation":-100},{"visibility":"simplified"}]},{"featureType":"road.arterial","stylers":[{"saturation":-100},{"lightness":30},{"visibility":"on"}]},{"featureType":"road.local","stylers":[{"saturation":-100},{"lightness":40},{"visibility":"on"}]},{"featureType":"transit","stylers":[{"saturation":-100},{"visibility":"simplified"}]},{"featureType":"administrative.province","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":-25},{"saturation":-100}]},{"featureType":"water","elementType":"geometry","stylers":[{"hue":"#ffff00"},{"lightness":-25},{"saturation":-97}]}]
+											
+		    });
+			var directionsService = new google.maps.DirectionsService;
+			
+			
+			{% for attrdata in final_attr_datas %}
+			var busSvg = {
+				// Bus body
+				// 282 wide... 322 wide with the sides added
+					top : 'c-4,-20,-18,-30,-38,-38 c-20,-8,-68,-18,-113,-19 c-35,1,-83,11,-113,19 c-20,8,-34,10,-38,38',
+					left : ' l-20,150 v170',
+					bottom : ' h26 v25 c0,30,45,30,45,0 v-25 h200 v25 c0,30,45,30,45,0 v-25 h26',
+					right : ' v-170 l-20,-150z',
+					// Marquee
+					marquee : 'm-60,10 h-182 c-20,0,-20,-25,0,-25 h182 c20,0,20,25,0,25z',
+					// Windshield
+					windshield : 'm-220,150 c-11,0,-14,-8,-12,-16 l12,-85 c2,-10,5,-17,18,-17 h220 c13,0,17,7,18,17 l12,85, c1,8,-1,16,-12,16 h-235z',
+				// Tires
+					tire_left : 'm15,100 c0,30,45,30,45,0 c0,-30,-45,-30,-45,0',
+					tire_right : 'm180,0 c0,30,45,30,45,0 c0,-30,-45,-30,-45,0',
+						};
+				var lineSymbol = {
+                                  path : 'M0,-100 '+busSvg['top']+busSvg['left']+busSvg['bottom']+busSvg['right']+busSvg['marquee']+busSvg['windshield']+busSvg['tire_left']+busSvg['tire_right'],
+								  fillColor: "red",
+								  fillOpacity: .5,
+								  scale: .05, //.05,
+								  strokeColor: "black",
+								  strokeWeight: .1
+								  
+                                         };
+				
+	
+				var polyline = new google.maps.Polyline({
+					//txt : txt,
+					path :  'M0,-100 '+busSvg['top']+busSvg['left']+busSvg['bottom']+busSvg['right']+busSvg['marquee']+busSvg['windshield']+busSvg['tire_left']+busSvg['tire_right'],
+					strokeColor: 'lightgreen',
+					strokeOpacity: 1,
+					strokeWeight: 5,
+					visible : true,
+					clickable: true,
+					directions: response,
+					icons: [{
+					icon: lineSymbol,
+					offset: '100%',
+					repeat : '500px'
+						}]
+					});
+				polyline.setMap(map);
+				animateCircle(polyline);
+	
+	
+				function animateCircle(polyline) {
+					var count = 0;
+					window.setInterval(function() {
+					count = (count + 1) % 50;
+
+					var icons = polyline.get('icons');
+					icons[0].offset = (count / 2) + '%';
+					polyline.set('icons', icons);
+						}, 200);
+						};
+						
+						
+			abc{{attrdata.Attr_id}} = new google.maps.DirectionsRenderer({
+                                              map             : map,
+                                              suppressMarkers : true,
+											  polylineOptions :{strokeColor: "#772200",
+											  strokeOpacity: 1.0,
+											  strokeWeight: 4,
+                                              scale: .8,
+                                              anchor: new google.maps.Point(4,8),
+                                              rotation: 0}
+											  });
+			{% endfor %}
+			
+			
+			taipeiTran = new google.maps.DirectionsRenderer({
+                                              map             : map,
+                                              suppressMarkers : true,
+											  polylineOptions :{strokeColor: "#772200",
+											  strokeOpacity: 1.0,
+											  strokeWeight: 4,
+                                              scale: .8,
+                                              anchor: new google.maps.Point(4,8),
+                                              rotation: 0}
+											  });
+				
+			
+			var summaryPanel = document.getElementById('panel');
+			directionsService.route({ origin : "(25.046252,121.517541)",
+				
+			{% for attrdata in final_attr_datas %}
+			
+								destination :  "({{attrdata.Attr_latitude}},{{attrdata.Attr_longitude}})",
+								travelMode  :  google.maps.DirectionsTravelMode.TRANSIT}, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					abc{{attrdata.Attr_id}}.setDirections(response);
+					var dir = response.routes[0].legs[0]; // simplify our object for future reference.
+					var output = '';
+					output += '<div class="dir_start">'+"{{attrdata.Attr_name}}"+'</div>';
+					output += '<div class="dir_summary silver">Travel: '+ dir.distance.text +' - about '+ dir.duration.text +'</div>';
+		 
+					output += '<table>';
+					for (i=0; i<dir.steps.length; i++){
+						output += '<tr style="border-bottom: 1px solid silver;">';
+						output += '<td class="dir_row"><span class="dir_sprite '+ dir.steps[i].maneuver +'"></span></td>';
+						output += '<td class="dir_row">'+ (i+1) +'.</td>';
+						output += '<td class="dir_row">'+ dir.steps[i].instructions +'</td>';
+						output += '<td class="dir_row" style="white-space:nowrap;">'+ dir.steps[i].distance.text +'</td>';
+						output += '</tr>';
+					}
+					output += '</table>';
+		 
+					//output += '<div class="dir_end">'+ dir.end_address +'</div>';
+					
+					summaryPanel.innerHTML += output;
+			 }	else {
+				window.alert('Directions request failed due to ' + status);
+			  }
+			});
+			
+			
+			directionsService.route({ origin : "({{attrdata.Attr_latitude}},{{attrdata.Attr_longitude}})",
+			{% endfor %}
+			
+			
+								destination :  "(25.046252,121.517541)",
+								travelMode  :  google.maps.DirectionsTravelMode.TRANSIT}, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					taipeiTran.setDirections(response);
+					var dir = response.routes[0].legs[0]; // simplify our object for future reference.
+					var output = '';
+						output += '<div class="dir_start">台北車站</div>';
+					output += '<div class="dir_summary silver">Travel: '+ dir.distance.text +' - about '+ dir.duration.text +'</div>';
+		 
+					output += '<table>';
+					for (i=0; i<dir.steps.length; i++){
+						output += '<tr style="border-bottom: 1px solid silver;">';
+						output += '<td class="dir_row"><span class="dir_sprite '+ dir.steps[i].maneuver +'"></span></td>';
+						output += '<td class="dir_row">'+ (i+1) +'.</td>';
+						output += '<td class="dir_row">'+ dir.steps[i].instructions +'</td>';
+						output += '<td class="dir_row" style="white-space:nowrap;">'+ dir.steps[i].distance.text +'</td>';
+						output += '</tr>';
+						
+					}
+					output += '</table>';
+					output += '<table><tr><td>結束時間{{Arrival_time_hour}}:{{Arrival_time_minute}},,,{{attr_hot}}</td></tr></table>'
+					//output += '<div class="dir_end">'+ dir.end_address +'</div>';
+		 
+					summaryPanel.innerHTML += output;
+
+			
+			 }	else {
+				window.alert('Directions request failed due to ' + status);
+			  }
+			});
+			
+			
+			
+			
+				
+			//點擊marker可看地點資訊
+			var infowindow = new google.maps.InfoWindow();
+			
+			var marker;
+
+			{% for i in final_attr_datas %}
+				var iconBase = 'http://maps.google.com/mapfiles/kml/pal3/icon';
+				count = {{ forloop.counter }}-1
+				var iconn = [count];
+				marker = new google.maps.Marker({
+				position: new google.maps.LatLng({{i.Attr_latitude}},{{i.Attr_longitude}}),
+				map: map,
+				icon: iconBase + iconn[0]+'.png',
+				animation:google.maps.Animation.BOUNCE
+			  });
+
+			  google.maps.event.addListener(marker, '', (function(marker, count) {
+				return function() {
+				  infowindow.setContent("名稱{{i.Attr_name}}</br>地址:{{i.Attr_address}}</br>開門時間:{{i.Attr_opentime}}</br>關門時間:{{i.Attr_endtime}}");
+				  infowindow.open(map, marker);
+				}
+			  })(marker, count));
+			  
+				var $a{{i.Attr_id}} = $('<div></div>')
+				.html('<iframe id="aa{{i.Attr_id}}" style="border: 0px; " src="" width="100%" height="100%"></iframe>')
+				.dialog({
+				autoOpen: false,
+				show: {
+					effect: "blind",
+					duration: 1000},
+				hide: {
+				effect: "explode",
+				duration: 1000},
+				modal: true,
+				height: 680,
+				width: 360,
+				title: "{{i.Attr_name}}"
+               });			  
+			  
+			 google.maps.event.addListener(marker, 'click', (function(marker, count) {
+				return function() {
+				$("#aa{{i.Attr_id}}").attr("src","/textcloud/?Attr_id={{i.Attr_id}}");
+				$a{{i.Attr_id}}.dialog('open');
+				}
+			  })(marker, count));
+			  
+
+			{% endfor %}
+			var iconBase = 'http://maps.google.com/mapfiles/kml/pal3/icon';
+				var iconn = [20];
+				marker = new google.maps.Marker({
+				position: new google.maps.LatLng(25.046252,121.517541),
+				map: map,
+				icon: iconBase + iconn[0]+'.png',
+				animation:google.maps.Animation.BOUNCE
+			  });
+
+			  marker.addListener('click', function() {
+				infowindow.setContent("起終點:台北車站");
+				infowindow.open(map, marker);
+			  });				
+			
+			
+			
+	}
+			</script>
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+			<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.ui/1.8.6/jquery-ui.min.js"></script>
+			<link type="text/css" rel="Stylesheet" href="http://ajax.microsoft.com/ajax/jquery.ui/1.8.6/themes/smoothness/jquery-ui.css">
+			<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+			<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+			<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+			<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC35ajFLVphL_1W-ZP3xKwVlgQxXNX_QYs&signed_in=true&libraries=places&callback=initMap&language=zh-TW"
+				async defer></script>
+			<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js" type="text/javascript"></script>
+			<script src="https://googledrive.com/host/0B6dtn0LtYgFgUUFtMzhOWHpyQ0k/jquery-1.7.2.min.js" type="text/javascript"></script>
+				
+	</body>
+</html>
+

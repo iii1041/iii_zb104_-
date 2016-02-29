@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" src="http://mbostock.github.io/d3/talk/20111018/d3/d3.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.io/d3/talk/20111018/d3/d3.geom.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.io/d3/talk/20111018/d3/d3.layout.js"></script>
+    <link type="text/css" rel="stylesheet" href="http://mbostock.github.io/d3/talk/20111018/style.css"/>
+    <style type="text/css">
+
+circle {
+  stroke: #000;
+  stroke-opacity: .5;
+}
+
+
+    </style>
+  </head>
+<body style="background-image:url({%static 'image/27.png' %});background-size: 570px 845px;;width:570px;height:200px;background-repeat:no-repeat;">
+  <div style="width:200px;font-size:20px;float:left;">
+	<h5>景點名稱:{{attr.Attr_name}}</h5>
+	<h5>景點地址:{{attr.Attr_address}}</h5>
+	<h5>景點電話:{{attr.Attr_tel}}</h5>
+	<h5>開放時間:{{attr.Attr_opentime}}~{{attr.Attr_endtime}}</h5>
+	<h5>標籤:
+		{% for i in t_t %}
+			{{i.tag.T_name}}
+		{% endfor %}
+	</h5>
+	<h5>地方特色:</h5>
+  </div>
+  {% static "" as baseUrl %}
+  <img src="{{ baseUrl }}image/{{attr.Attr_id}}.jpg" style="hight:380px;width:350px; position:absolute;right:5%;float:left;">
+  <div id="body"
+    style="width:570px; height:520px; border: 1px solid #000;position:absolute;top:40%;clear:both;"></div>
+	 <script type="text/javascript">
+
+		var w = 570,
+			h = 570;
+
+		var nodes = [{radius:0,text:""},
+					{% for i in textc %}
+					{radius:{{i.TC.TC_count}}+20,text:"{{i.TC.TC_name}}"},
+					{% endfor %}
+					],
+			color = d3.scale.category10();
+
+		var force = d3.layout.force()
+			.gravity(0.05)
+			.charge(function(d, i) { return i ? 0 : -900; })
+			.nodes(nodes)
+			.size([w, h]);
+			
+		var root = nodes[0];
+		root.radius = 0;
+		root.fixed = true;
+
+		force.start();
+
+		var svg = d3.select("#body").append("svg:svg")
+			.attr("width", w)
+			.attr("height", h)
+			.attr("background", "yellow");
+		
+		var circleData = svg.selectAll("circle")
+			.data(nodes.slice(1))
+		    .enter().append("svg:circle")
+			.attr("r", function(d) { return d.radius  })  //調整球的大小
+			.style("fill", function(d, i) { return color(i % 3); });
+		
+		
+				
+		var text = svg.selectAll("text")
+		   .data(nodes.slice(1))
+		   .enter().append("svg:text")
+		   .text(function(d) { return d.text; })
+		   .attr("font-family", "微軟正黑體")
+			.attr("font-size", function(d) { return d.radius-20; })  //調整文字大小
+			.attr("fill", "white");
+		
+		
+		force.on("tick", function(e) {
+		  var q = d3.geom.quadtree(nodes),
+			  i = 0,
+			  n = nodes.length;
+
+		  while (++i < n) {
+			q.visit(collide(nodes[i]));
+		  }
+
+		  svg.selectAll("circle")
+			  .attr("cx", function(d) { return d.x; })
+			  .attr("cy", function(d) { return d.y; });
+			  
+			svg.selectAll("text")
+				  .attr("x", function(d) { return d.x-20; })  //調整文字的位置
+				  .attr("y", function(d) { return d.y+8; });
+			});
+
+		svg.on("mousemove", function() {
+		  var p1 = d3.svg.mouse(this);
+		  root.px = p1[0];
+		  root.py = p1[1];
+		  force.resume();
+		});
+
+		function collide(node) {
+		  var r = node.radius + 16,
+			  nx1 = node.x - r,
+			  nx2 = node.x + r,
+			  ny1 = node.y - r,
+			  ny2 = node.y + r;
+		  return function(quad, x1, y1, x2, y2) {
+			if (quad.point && (quad.point !== node)) {
+			  var x = node.x - quad.point.x,
+				  y = node.y - quad.point.y,
+				  l = Math.sqrt(x * x + y * y),
+				  r = node.radius + quad.point.radius;
+			  if (l < r) {
+				l = (l - r) / l * .5;
+				node.x -= x *= l;
+				node.y -= y *= l;
+				quad.point.x += x;
+				quad.point.y += y;
+			  }
+			}
+			return x1 > nx2
+				|| x2 < nx1
+				|| y1 > ny2
+				|| y2 < ny1;
+		  };
+		}
+
+    </script>	
+   
+</body>
+</html>

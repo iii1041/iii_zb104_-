@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>用d3去畫標籤雲</title>
+</head>
+<body>
+  <div id="tag"
+    style="width: 300px; height: 300px; border: 1px solid #000"></div>
+  <script src="https://sites.google.com/site/bioankeyang/study/javascript/d3/d3.js"></script>
+  <script src="https://sites.google.com/site/bioankeyang/study/javascript/d3/d3.layout.cloud.js"></script>
+  <script>
+    (function() {
+      var fill = d3.scale.category20();
+      //要顯示於標籤雲的資料內容
+      var data = [
+         {
+			text :"101",
+			size :70
+			},
+			{
+			text :"夜景",
+			size :43
+			},
+			{
+			text :"電梯",
+			size :42
+			},
+			{
+			text :"觀景台",
+			size :25
+			},
+			{
+			text :"排隊",
+			size :25
+			},
+			{
+			text :"地標",
+			size :23
+			},
+			{
+			text :"高樓",
+			size :19
+			},
+			{
+			text :"89",
+			size :18
+			},
+			{
+			text :"購物",
+			size :16
+			},
+			{
+			text :"俯瞰",
+			size :16
+			},
+			{
+			text :"商場",
+			size :16
+			},
+			{
+			text :"特別",
+			size :14
+			},
+			{
+			text :"阻尼器",
+			size :10
+			},
+			{
+			text :"晚上",
+			size :9
+			},
+			{
+			text :"明信片",
+			size :9
+			},
+			{
+			text :"標誌",
+			size :9
+			},
+			{
+			text :"天氣",
+			size :9
+			},
+			{
+			text :"景點",
+			size :8
+			},
+			{
+			text :"門票",
+			size :7
+			},
+			{
+			text :"設計",
+			size :6
+			},
+			{
+			text :"鼎泰豐",
+			size :6
+			},
+			{
+			text :"21",
+			size :5
+			},
+			{
+			text :"觀景",
+			size :5
+			},
+			{
+			text :"高度",
+			size :5
+			},
+			{
+			text :"大廈",
+			size :5
+			},
+			{
+			text :"服務",
+			size :4
+			},
+			{
+			text :"價格",
+			size :4
+			},
+			{
+			text :"體驗",
+			size :4
+			},
+			{
+			text :"購票",
+			size :4
+			},
+			{
+			text :"城市",
+			size :4
+			},
+			{
+			text :"上樓",
+			size :4
+			},
+			{
+			text :"英尺",
+			size :4
+			},
+			{
+			text :"標性",
+			size :4
+			},
+			{
+			text :"旁邊",
+			size :4
+			},
+			{
+			text :"象山",
+			size :4
+			},
+			{
+			text :"頂樓",
+			size :4
+			},
+			{
+			text :"660",
+			size :3
+			},
+			{
+			text :"西爾斯大樓",
+			size :3
+			},
+			{
+			text :"免費",
+			size :3
+			},
+			{
+			text :"風景",
+			size :3
+			},
+			{
+			text :"退稅",
+			size :3
+			},
+			{
+			text :"燈光",
+			size :3
+			},
+			{
+			text :"22",
+			size :3
+			},
+			{
+			text :"星巴克",
+			size :3
+			},
+			{
+			text :"東西",
+			size :3
+			},
+			{
+			text :"450",
+			size :3
+			},
+			{
+			text :"15",
+			size :3
+			},
+			{
+			text :"內部",
+			size :3
+			},
+			{
+			text :"迪拜",
+			size :3
+			},
+			{
+			text :"灣的",
+			size :3
+			},
+			{
+			text :"全景",
+			size :3
+			},
+			{
+			text :"擁有",
+			size :3
+			},
+			{
+			text :"00",
+			size :3
+			},
+			{
+			text :"環球",
+			size :3
+			},
+			{
+			text :"東方",
+			size :3
+			},
+			{
+			text :"速度",
+			size :3
+			},
+			{
+			text :"45",
+			size :3
+			},
+			{
+			text :"環境",
+			size :3
+			},
+			{
+			text :"外觀",
+			size :2
+			},
+			{
+			text :"拍照",
+			size :2
+			},
+			{
+			text :"書店",
+			size :2
+			},
+			{
+			text :"誠品",
+			size :2
+			},
+			{
+			text :"奢侈品",
+			size :2
+			},
+			{
+			text :"摩天",
+			size :2
+			},
+			{
+			text :"大牌",
+			size :2
+			},
+			{
+			text :"速率",
+			size :2
+			},
+			{
+			text :"個性",
+			size :2
+			},
+			{
+			text :"市信義區",
+			size :2
+			},
+			{
+			text :"88",
+			size :2
+			},
+			{
+			text :"便宜",
+			size :2
+			},
+			{
+			text :"大道",
+			size :2
+			},
+			{
+			text :"11",
+			size :2
+			},
+			{
+			text :"12",
+			size :2
+			},
+			{
+			text :"世界",
+			size :2
+			},
+			{
+			text :"氣氛",
+			size :2
+			},
+			{
+			text :"地方",
+			size :2
+			},
+			{
+			text :"金茂",
+			size :2
+			},
+			{
+			text :"樓到",
+			size :2
+			},
+			{
+			text :"打卡",
+			size :2
+			},
+			{
+			text :"火了",
+			size :2
+			},
+			{
+			text :"市府",
+			size :2
+			},
+			{
+			text :"中正",
+			size :2
+			},
+			{
+			text :"508",
+			size :2
+			},
+			{
+			text :"500",
+			size :2
+			},
+			{
+			text :"金色",
+			size :2
+			},
+			{
+			text :"景觀",
+			size :2
+			},
+			{
+			text :"有序",
+			size :2
+			},
+			{
+			text :"公仔",
+			size :2
+			},
+			{
+			text :"2010",
+			size :2
+			},
+			{
+			text :"地下",
+			size :2
+			},
+			{
+			text :"青壯",
+			size :2
+			},
+			{
+			text :"紐約",
+			size :2
+			},
+			{
+			text :"下樓",
+			size :2
+			},
+			{
+			text :"搖晃",
+			size :2
+			},
+			{
+			text :"鋼板",
+			size :2
+			},
+			{
+			text :"外面",
+			size :2
+			},
+			{
+			text :"大球",
+			size :2
+			},
+			{
+			text :"樓僅",
+			size :2
+			},
+			{
+			text :"樓為",
+			size :2
+			},
+			{
+			text :"景色",
+			size :2
+			},
+			{
+			text :"買票",
+			size :2
+			},
+			{
+			text :"這是",
+			size :2
+			},
+			{
+			text :"排長",
+			size :2
+			},
+			{
+			text :"遠處",
+			size :2
+			},
+			{
+			text :"600",
+			size :2
+			},
+			{
+			text :"地址",
+			size :2
+			},
+			{
+			text :"選擇",
+			size :2
+			},
+			{
+			text :"沒能",
+			size :2
+			},
+			{
+			text :"每分鐘",
+			size :2
+			},
+			{
+			text :"記得",
+			size :2
+			},
+			{
+			text :"美食",
+			size :2
+			},
+			{
+			text :"部為",
+			size :1
+			},
+			{
+			text :"美輪",
+			size :1
+			},
+			{
+			text :"滿眼",
+			size :1
+			},
+			{
+			text :"快有",
+			size :1
+			},
+			{
+			text :"一樓",
+			size :1
+			},
+			{
+			text :"永康",
+			size :1
+			},
+			{
+			text :"辦公大樓",
+			size :1
+			},
+			{
+			text :"人龍",
+			size :1
+			},
+			{
+			text :"紀錄",
+			size :1
+			},
+			{
+			text :"很貴",
+			size :1
+			},
+			{
+			text :"廣州",
+			size :1
+			},
+			{
+			text :"盡覽大",
+			size :1
+			},
+			{
+			text :"觀光",
+			size :1
+			},
+			{
+			text :"周歲",
+			size :1
+			},
+			{
+			text :"團會",
+			size :1
+			},
+			{
+			text :"灣景點",
+			size :1
+			},
+			{
+			text :"夕陽下",
+			size :1
+			},
+			{
+			text :"超多",
+			size :1
+			},
+			{
+			text :"來計算",
+			size :1
+			},
+			{
+			text :"時尚",
+			size :1
+			},
+			{
+			text :"1703",
+			size :1
+			},
+			{
+			text :"保防",
+			size :1
+			},
+			{
+			text :"樓下",
+			size :1
+			},
+			{
+			text :"實時",
+			size :1
+			},
+			{
+			text :"眾隨時",
+			size :1
+			},
+			{
+			text :"1667",
+			size :1
+			},
+			{
+			text :"還導",
+			size :1
+			},
+			{
+			text :"天價",
+			size :1
+			},
+			{
+			text :"不給",
+			size :1
+			},
+			{
+			text :"紛紛",
+			size :1
+			},
+			{
+			text :"百分百",
+			size :1
+			},
+			{
+			text :"早已",
+			size :1
+			},
+			{
+			text :"樓直",
+			size :1
+			},
+			{
+			text :"捷運線",
+			size :1
+			},
+			{
+			text :"調諧",
+			size :1
+			},
+			{
+			text :"總體",
+			size :1
+			},
+			{
+			text :"帶來",
+			size :1
+			},
+			{
+			text :"寫國父",
+			size :1
+			},
+			{
+			text :"夜裡",
+			size :1
+			},
+			{
+			text :"聚場",
+			size :1
+			},
+			{
+			text :"站上去",
+			size :1
+			},
+			{
+			text :"529",
+			size :1
+			},
+			{
+			text :"紅色",
+			size :1
+			},
+			{
+			text :"橋連接",
+			size :1
+			},
+			{
+			text :"448",
+			size :1
+			},
+			{
+			text :"市區",
+			size :1
+			},
+			{
+			text :"442",
+			size :1
+			},
+			{
+			text :"拳擊台",
+			size :1
+			},
+			{
+			text :"不用",
+			size :1
+			},
+			{
+			text :"100",
+			size :1
+			},
+			{
+			text :"37",
+			size :1
+			},
+			{
+			text :"36",
+			size :1
+			},
+			{
+			text :"438",
+			size :1
+			},
+			{
+			text :"室外",
+			size :1
+			},
+			{
+			text :"石工",
+			size :1
+			},
+			{
+			text :"俯看",
+			size :1
+			},
+			{
+			text :"那種",
+			size :1
+			},
+			{
+			text :"身驅",
+			size :1
+			},
+			{
+			text :"發散",
+			size :1
+			},
+			{
+			text :"萌萌",
+			size :1
+			},
+			{
+			text :"拍個",
+			size :1
+			},
+			{
+			text :"照片",
+			size :1
+			},
+			{
+			text :"乖康",
+			size :1
+			},
+			{
+			text :"年齡",
+			size :1
+			},
+			{
+			text :"比國內",
+			size :1
+			},
+			{
+			text :"仰視",
+			size :1
+			},
+			{
+			text :"全世界",
+			size :1
+			},
+			{
+			text :"兌換券",
+			size :1
+			},
+			{
+			text :"從樓",
+			size :1
+			},
+			{
+			text :"中國",
+			size :1
+			},
+			{
+			text :"小蠻",
+			size :1
+			},
+			{
+			text :"91",
+			size :1
+			},
+			{
+			text :"92",
+			size :1
+			},
+			{
+			text :"落日",
+			size :1
+			},
+			{
+			text :"樓有",
+			size :1
+			},
+			{
+			text :"學生",
+			size :1
+			},
+			{
+			text :"過雨",
+			size :1
+			},
+			{
+			text :"歐米",
+			size :1
+			},
+			{
+			text :"中心",
+			size :1
+			},
+			{
+			text :"講解機",
+			size :1
+			},
+			{
+			text :"即化",
+			size :1
+			},
+			{
+			text :"好奇心",
+			size :1
+			},
+			{
+			text :"駐業者",
+			size :1
+			},
+			{
+			text :"咨詢",
+			size :1
+			},
+			{
+			text :"階段",
+			size :1
+			},
+			{
+			text :"銀絲",
+			size :1
+			},
+			{
+			text :"外衣",
+			size :1
+			},
+			{
+			text :"名牌",
+			size :1
+			},
+			{
+			text :"進去",
+			size :1
+			},
+			{
+			text :"永無止",
+			size :1
+			},
+			{
+			text :"標準",
+			size :1
+			},
+			{
+			text :"步道",
+			size :1
+			},
+			{
+			text :"團隊",
+			size :1
+			},
+			{
+			text :"餐廳",
+			size :1
+			},
+			{
+			text :"141",
+			size :1
+			},
+			{
+			text :"九折",
+			size :1
+			},
+			{
+			text :"三圈",
+			size :1
+			},
+			{
+			text :"環節",
+			size :1
+			},
+			{
+			text :"有空",
+			size :1
+			},
+			{
+			text :"品比",
+			size :1
+			},
+			{
+			text :"太大",
+			size :1
+			},
+			{
+			text :"黑巧客",
+			size :1
+			},
+			{
+			text :"頂層",
+			size :1
+			},
+			{
+			text :"捷運",
+			size :1
+			},
+			{
+			text :"1470",
+			size :1
+			},
+			{
+			text :"之後買",
+			size :1
+			},
+			{
+			text :"性時",
+			size :1
+			},
+			{
+			text :"掃蕩",
+			size :1
+			},
+			{
+			text :"國際",
+			size :1
+			},
+			{
+			text :"書賣",
+			size :1
+			},
+			{
+			text :"震驚",
+			size :1
+			},
+			{
+			text :"品牌",
+			size :1
+			},
+			{
+			text :"最引",
+			size :1
+			},
+			{
+			text :"服飾",
+			size :1
+			},
+			{
+			text :"白天",
+			size :1
+			},
+			{
+			text :"米來",
+			size :1
+			},
+			{
+			text :"消費",
+			size :1
+			},
+			{
+			text :"主體",
+			size :1
+			},
+			{
+			text :"渾圓",
+			size :1
+			},
+			{
+			text :"29",
+			size :1
+			},
+			{
+			text :"戶外",
+			size :1
+			},
+			{
+			text :"結構",
+			size :1
+			},
+			{
+			text :"轉讓",
+			size :1
+			},
+			{
+			text :"2012",
+			size :1
+			},
+			{
+			text :"旅行",
+			size :1
+			},
+			{
+			text :"完工",
+			size :1
+			},
+			{
+			text :"置身",
+			size :1
+			}, ];
+      d3.layout.cloud().size([ 300, 300 ]).words(data).padding(3).rotate(
+          0).font('"微軟正黑體",Impact').fontSize(function(d) {
+        return d.size;
+      }).on("end", draw).start();
+
+      function draw(words) {
+        d3.select("#tag") //要插入標籤雲的tag id
+        .append("svg").attr("width", 300).attr("height", 300)
+        .append("g").attr("transform", "translate(150,150)") //這裡的值要對應到繪圖區域的寬、高的一半，針對不同的瀏覽器要設可以使用的值，如Chrome為-webkit-transform
+        .selectAll("text").data(words).enter().append("text")
+        .style("font-size", function(d) {
+              return d.size + "px";
+            })
+        .style("font-family", '"微軟正黑體",Impact')
+        .style("cursor", 'pointer')
+        .style("fill", function(d, i) {
+          return fill(i);
+        }).attr("text-anchor", "middle")
+        .attr("transform",//跟上面的transform一樣，需依不同的瀏覽器設定對應的值
+            function(d) {
+              return "translate(" + [ d.x, d.y ] + ")rotate(" + d.rotate + ")";
+            })
+        .text(function(d) {
+          return d.text;
+        }).on('click', function(d) {
+          window.open(d.url);
+        });
+      }
+    }());
+  </script>
+</body>
+</html>

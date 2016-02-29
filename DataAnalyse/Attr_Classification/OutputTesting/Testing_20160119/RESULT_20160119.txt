@@ -1,0 +1,16 @@
+﻿Final Classification Results
+TestDate : 20160119
+
+JSON ONLINE PREVIEW
+
+DictA.關鍵字字典 (KEY:景點編號.txt)
+http://codebeautify.org/jsonviewer/cb955cc1
+
+DictB.關鍵字字典 (KEY:景點名稱)
+http://codebeautify.org/jsonviewer/cbaf4f24
+
+DictC.關鍵字字典 (分類完畢完整版)
+http://codebeautify.org/jsonviewer/cb2cb218
+
+DictConcept.關鍵字分類字典
+http://codebeautify.org/jsonviewer/cba75170

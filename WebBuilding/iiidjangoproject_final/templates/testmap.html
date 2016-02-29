@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+  <head>
+    <title>Place Autocomplete</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+  
+	<style>
+		{% for i in final_attr_datas %}
+			.dir{{i.Attr_id}}{
+				background:#f2e5d4;
+			}
+			
+		{% endfor %}
+		.dir_final{
+				background:#f2e5d4;
+			}
+		#weathericon{
+			float:right;
+			width:100px
+		}
+		
+		#weathertemp{
+			float:left;
+			position:absolute;
+			margin:-10px;
+			top:-10px;
+		}
+		
+		#a{
+			width:300px;
+			height:100px;
+			background:-webkit-linear-gradient(left,#fff,steelblue);
+			position:absolute;
+			right:-200px;
+			color:white;
+			text-align:left;
+		
+		}
+		#b{
+			width:300px;
+			height:100px;
+			background:-webkit-linear-gradient(left, #fff,#85d500);
+			position:absolute;
+			right:-200px;
+			color:white;
+			text-align:left;
+			top:100px;
+		
+		}
+
+		#board{
+			color:black;
+			top:100px;
+			width:250px;
+			height:175px;
+			background:-webkit-linear-gradient(left,#fff,steelblue);
+			padding:20px;
+			position:absolute;
+			right:-290px;
+			
+			
+		}
+		#co2{
+			color:black;
+			top:200px;
+			width:250px;
+			height:100px;
+			background:-webkit-linear-gradient(left, #fff,#85d500);
+			padding:20px;
+			position:absolute;
+			right:-290px;
+		}
+		
+		html, body,#map,#panel {
+			height: 250%;
+			margin: 0;
+			padding: 0;
+		}
+      
+		#panel {
+            background-color:#f2e5d4;
+            position: absolute;
+            top: 0px;
+            left: 0;
+            bottom: 0;
+            width: 400px;
+			border:1px solid #fff;
+            float: left;
+		
+        }
+		#map{position:absolute; top:0; left:300px; right:0; bottom:0; }
+		.dir_AttrName,.dir_start,.dir_summary{
+		font:20px e5c;color:Maroon;
+		}
+		.dir_row{
+		font:15px c8e;
+		}
+	 
+		@font-face{
+			font-family:"c8e";
+			src:url({%static 'fonts/c8e.ttf' %});
+		
+		}
+		@font-face{
+			font-family:"e5c";  
+			src:url({%static 'fonts/e5c.ttf' %});
+			
+		}
+		#out{
+		
+            width: 410px;
+            height: 300px;
+            border: 1px solid #000;
+            float: left;
+            margin:5px;
+
+        
+		}
+		.line{
+			width: 400px;
+			border: 1px solid #000;
+		}
+
+
+    </style>
+  </head>
+  <body>
+	    <div id="dialog" title="Basic dialog"></div>
+		<div id="map"></div>
+		<div id="panel">
+			{{summary|safe}}
+		</div>
+		<div style="clear:both"></div>
+		<aside id="board">
+			<div id="weathertemp">
+				<h5>平均溫度:{{day}}</h5>
+				<h5>最低溫:{{mintemp}}</h5>
+				<h5>最高溫:{{maxtemp}}</h5>
+				<h5>早上溫度:{{morning}}</h5>
+				<h5>午間溫度:{{eve}}</h5>
+				<h5>晚間溫度:{{night}}</h5>
+			</div> 
+			<img id="weathericon" src="http://openweathermap.org/img/w/{{icon}}.png">
+			<div style="clear:both"></div>
+		</aside>
+		
+		<aside id="a">
+			<img src="{% static 'image/28.png'%}" alt="Smiley face" height="90" width="100">
+		</aside>
+		<aside id="b">
+			<img src="{% static 'image/29.png'%}" alt="Smiley face" height="90" width="100">
+		</aside>
+		<aside id="co2">
+			<h5>減少{{car_distance_co2}}公斤二氧化碳</h5>
+			<h5>減少砍{{co2tree}}棵樹木</h5>
+		</aside> 
+	<script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+	<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script>
+		
+			$('#a').hover(
+				function(){
+					$('#board').stop().animate(
+						{right:'0px'},
+						1000,
+						'easeInSine'
+					);
+					$('#a').stop().animate(
+						{right:'-10px'},
+						1000,
+						'easeInSine'
+					);
+					$('#a').css('text-align','center')
+					$('#b').css('display','none')
+			},
+				function(){
+					$('#board').stop().animate({right:'-290px'},1500,'easeOutBounce');
+					$('#a').stop().animate({right:'-200px'},1500,'easeOutBounce');
+					$('#a').css('text-align','left')
+					$('#b').css('display','inline')
+					
+			});
+			$('#b').hover(
+				function(){
+					$('#co2').stop().animate(
+						{right:'0px'},
+						1000,
+						'easeInSine'
+					);
+					$('#b').stop().animate(
+						{right:'-10px'},
+						1000,
+						'easeInSine'
+					);
+					$('#b').css('text-align','center')
+			},
+				function(){
+					$('#co2').stop().animate({right:'-290px'},1500,'easeOutBounce');
+					$('#b').stop().animate({right:'-200px'},1500,'easeOutBounce');
+					$('#b').css('text-align','left')
+					
+			});
+		
+	
+	//初始化
+//┌─────────────────────────────────────────────────────────↓地圖初始化↓────────────────────────────────────────────────────────┐
+		function initMap() {
+			
+			var styles = [
+				{
+					"featureType": "administrative",
+					"elementType": "all",
+					"stylers": [
+						{
+							"visibility": "on"
+						},
+						{
+							"lightness": 33
+						}
+					]
+				},
+				{
+					"featureType": "landscape",
+					"elementType": "all",
+					"stylers": [
+						{
+							"color": "#f2e5d4"
+						}
+					]
+				},
+				{
+					"featureType": "poi.park",
+					"elementType": "geometry",
+					"stylers": [
+						{
+							"color": "#c5dac6"
+						}
+					]
+				},
+				{
+					"featureType": "poi.park",
+					"elementType": "labels",
+					"stylers": [
+						{
+							"visibility": "on"
+						},
+						{
+							"lightness": 20
+						}
+					]
+				},
+				{
+					"featureType": "road",
+					"elementType": "all",
+					"stylers": [
+						{
+							"lightness": 20
+						}
+					]
+				},
+				{
+					"featureType": "road.highway",
+					"elementType": "geometry",
+					"stylers": [
+						{
+							"color": "#c5c6c6"
+						}
+					]
+				},
+				{
+					"featureType": "road.arterial",
+					"elementType": "geometry",
+					"stylers": [
+						{
+							"color": "#e4d7c6"
+						}
+					]
+				},
+				{
+					"featureType": "road.local",
+					"elementType": "geometry",
+					"stylers": [
+						{
+							"color": "#fbfaf7"
+						}
+					]
+				},
+				{
+					"featureType": "water",
+					"elementType": "all",
+					"stylers": [
+						{
+							"visibility": "on"
+						},
+						{
+							"color": "#acbcc9"
+						}
+					]
+				}
+			];
+			var map = new google.maps.Map(document.getElementById('map'), {
+			mapTypeControl: false,
+			center: new google.maps.LatLng(25.046309, 121.517878),
+			zoom: 13,
+			draggableCursor: 'auto',
+			draggingCursor: 'move',
+			disableDoubleClickZoom: true,
+			styles: styles								    
+		  });
+		//└──────────────────────────────────────────↑地圖初始化↑──────────────────────────────────────────────────────────────────────────┘
+			var summaryPanel = document.getElementById('panel');//左方說明行程攔
+			var infowindow = new google.maps.InfoWindow();//marker
+			var directionsService = new google.maps.DirectionsService;//路線物件
+			
+			
+			//路線請求
+			
+			
+			
+			var color = ['green','orange','yellow','green','blue','purple','white']
+			var num=0;
+		//┌─────────────────────────────────────────────────────────↓Marker↓────────────────────────────────────────────────────────┐
+			var marker;
+			p1 = "台北車站"
+			{% for i in final_attr_datas %}
+				{% static "" as baseUrl %}
+				iconname = "{{i.Attr_icon}}-{{i.Attr_hot}}.png"
+				marker = new google.maps.Marker({
+				position: new google.maps.LatLng({{i.Attr_latitude}},{{i.Attr_longitude}}),
+				map: map,
+				icon: "{{ baseUrl }}image/"+iconname,
+				flat: true,				
+				optimized: false,
+				visible: true,
+				animation:google.maps.Animation.BOUNCE
+							});	
+							
+				google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+					return function() {	  
+					infowindow.setContent("名稱{{i.Attr_name}}</br>地址:{{i.Attr_address}}</br>開門時間:{{i.Attr_opentime}}</br>關門時間:{{i.Attr_endtime}}");
+					infowindow.open(map, marker);
+					}})(marker));
+				google.maps.event.addListener(marker, 'mouseout', function () {
+					infowindow.close();
+				});
+				
+				var $a{{i.Attr_id}} = $('<div></div>')
+						.html('<iframe id="aa{{i.Attr_id}}" style="border: 0px; " src="" width="100%" height="100%"></iframe>')
+						.dialog({
+						autoOpen: false,
+						show: {
+							effect: "blind",
+							duration: 1000},
+						hide: {
+						effect: "explode",
+						duration: 1000},
+						modal: true,
+						height: 920,
+						width: 650,
+						title: "{{i.Attr_name}}"
+					   });			  
+				
+				google.maps.event.addListener(marker, 'click', function () {
+					$("#aa{{i.Attr_id}}").attr("src","/textcloud/?Attr_id={{i.Attr_id}}");
+					$a{{i.Attr_id}}.dialog('open');	
+				});
+				
+			{% endfor %}
+	//└──────────────────────────────────────────↑marker↑──────────────────────────────────────────────────────────────────────────┘
+			marker = new google.maps.Marker({
+			position: new google.maps.LatLng(25.046309,121.517878),
+			map: map,
+			icon: "{%static 'image/taipei.png'%}",
+			flat: true,				
+			optimized: false,
+			visible: true,
+			animation:google.maps.Animation.BOUNCE
+						});	
+						
+			google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+				return function() {	  
+				infowindow.setContent("起始終點站:台北車站");
+				infowindow.open(map, marker);
+				}})(marker));
+			google.maps.event.addListener(marker, 'mouseout', function () {
+				infowindow.close();
+			});
+				
+		
+	//┌─────────────────────────────────────────────────────────↓路線↓────────────────────────────────────────────────────────┐
+
+			directionsService.route({ origin : new google.maps.LatLng(25.048164,121.517292),//第一個景點
+			{% for i in final_attr_datas %}
+									  destination : new google.maps.LatLng({{i.Attr_latitude}},{{i.Attr_longitude}}),//第二個景點
+									  travelMode  :  google.maps.TravelMode.TRANSIT,
+									  unitSystem: google.maps.UnitSystem.METRIC}, function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				//車子
+				var busSvg = {
+					top : 'c-4,-20,-18,-30,-38,-38 c-20,-8,-68,-18,-113,-19 c-35,1,-83,11,-113,19 c-20,8,-34,10,-38,38',
+					left : ' l-20,150 v170',
+					bottom : ' h26 v25 c0,30,45,30,45,0 v-25 h200 v25 c0,30,45,30,45,0 v-25 h26',
+					right : ' v-170 l-20,-150z',
+					marquee : 'm-60,10 h-182 c-20,0,-20,-25,0,-25 h182 c20,0,20,25,0,25z',
+					windshield : 'm-220,150 c-11,0,-14,-8,-12,-16 l12,-85 c2,-10,5,-17,18,-17 h220 c13,0,17,7,18,17 l12,85, c1,8,-1,16,-12,16 h-235z',
+					tire_left : 'm15,100 c0,30,45,30,45,0 c0,-30,-45,-30,-45,0',
+					tire_right : 'm180,0 c0,30,45,30,45,0 c0,-30,-45,-30,-45,0',
+					};
+				//形成車子
+				var lineSymbol = {
+								  path : 'M0,-100 '+busSvg['top']+busSvg['left']+busSvg['bottom']+busSvg['right']+busSvg['marquee']+busSvg['windshield']+busSvg['tire_left']+busSvg['tire_right'],
+								  fillColor : "blue",
+								  fillOpacity: .5,
+								  scale: .05, //.05,
+								  strokeColor: "black",
+								  strokeWeight: .1
+								  
+										 };
+				var polyline = new google.maps.Polyline({
+					path :  'M0,-100 '+busSvg['top']+busSvg['left']+busSvg['bottom']+busSvg['right']+busSvg['marquee']+busSvg['windshield']+busSvg['tire_left']+busSvg['tire_right'],
+					strokeColor: color[{{forloop.counter}}],
+					strokeOpacity: 0.7,
+					strokeWeight: 4,
+					visible : true,
+					clickable: true,
+					directions: response,
+					icons: [{
+					icon: lineSymbol,
+					offset: '100%',
+					repeat : '500px'
+						}]
+					});
+				polyline.setMap(map);
+				animateCircle(polyline);
+				num+=1;
+	//└──────────────────────────────────────────↑路線↑──────────────────────────────────────────────────────────────────────────┘	
+
+	//┌─────────────────────────────────────────────────────────↓路線說明↓────────────────────────────────────────────────────────┐
+				function animateCircle(polyline) {
+					var count = 0;
+					window.setInterval(function() {
+					count = (count + 1) % 50;
+
+					var icons = polyline.get('icons');
+					icons[0].offset = (count / 2) + '%';
+					polyline.set('icons', icons);
+						}, 200);
+						};
+				//每條路線都要有一個
+				Rend{{i.Attr_id}} = new google.maps.DirectionsRenderer({
+									  map             : map,
+									  suppressMarkers : true,
+									  polylineOptions : polyline,
+									  suppressInfoWindows : false,
+									  preserveViewport : false,
+									  suppressPolylines: false,
+									  preserveViewport: false
+									  });
+									
+				
+				//指標移到線上會有說明
+				Rend{{i.Attr_id}}.setDirections(response);				
+				var step = 1;
+				google.maps.event.addListener(polyline, "mouseover", function () {
+					infowindow.setContent(response.routes[0].legs[0].steps[step].distance.text + "<br>" + response.routes[0].legs[0].steps[step].duration.text + " ");
+					//infowindow.open(map);
+					$('.dir{{i.Attr_id}}').css('background','lightgreen')
+				});
+				google.maps.event.addListener(polyline, 'mouseout', function () {
+					infowindow.close();
+					$('.dir{{i.Attr_id}}').css('background','#f2e5d4')
+				});
+				p2 = "{{i.Attr_name}}"
+				var dir = response.routes[0].legs[0]; // simplify our object for future reference.
+				
+	 }		
+	 
+			else {
+				window.alert('Directions request failed due to ' + status);
+	  }
+	 
+	});
+		
+	//----------------------------------------------------------------------------------------------------------------------------------
+
+				directionsService.route({ origin : new google.maps.LatLng({{i.Attr_latitude}},{{i.Attr_longitude}}),
+	{% endfor %}
+									  destination : new google.maps.LatLng(25.048164,121.517292),
+									  travelMode  :  google.maps.TravelMode.TRANSIT,
+									  unitSystem: google.maps.UnitSystem.METRIC}, function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				var busSvg = {
+				// Bus body
+				// 282 wide... 322 wide with the sides added
+					top : 'c-4,-20,-18,-30,-38,-38 c-20,-8,-68,-18,-113,-19 c-35,1,-83,11,-113,19 c-20,8,-34,10,-38,38',
+					left : ' l-20,150 v170',
+					bottom : ' h26 v25 c0,30,45,30,45,0 v-25 h200 v25 c0,30,45,30,45,0 v-25 h26',
+					right : ' v-170 l-20,-150z',
+					// Marquee
+					marquee : 'm-60,10 h-182 c-20,0,-20,-25,0,-25 h182 c20,0,20,25,0,25z',
+					// Windshield
+					windshield : 'm-220,150 c-11,0,-14,-8,-12,-16 l12,-85 c2,-10,5,-17,18,-17 h220 c13,0,17,7,18,17 l12,85, c1,8,-1,16,-12,16 h-235z',
+				// Tires
+					tire_left : 'm15,100 c0,30,45,30,45,0 c0,-30,-45,-30,-45,0',
+					tire_right : 'm180,0 c0,30,45,30,45,0 c0,-30,-45,-30,-45,0',
+						};
+				var lineSymbol = {
+                                  path : 'M0,-100 '+busSvg['top']+busSvg['left']+busSvg['bottom']+busSvg['right']+busSvg['marquee']+busSvg['windshield']+busSvg['tire_left']+busSvg['tire_right'],
+								  fillColor: "red",
+								  fillOpacity: .5,
+								  scale: .05, //.05,
+								  strokeColor: "black",
+								  strokeWeight: .1
+								  
+                                         };
+				
+				//var infowindow = new google.maps.InfoWindow({
+					//content: ""
+					//});
+				//var txt = "This is the FIRST route";
+				
+				var polyline = new google.maps.Polyline({
+					//txt : txt,
+					path :  'M0,-100 '+busSvg['top']+busSvg['left']+busSvg['bottom']+busSvg['right']+busSvg['marquee']+busSvg['windshield']+busSvg['tire_left']+busSvg['tire_right'],
+					strokeColor:'steelblue',
+					strokeOpacity: 0.7,
+					strokeWeight: 4,
+					visible : true,
+					clickable: true,
+					directions: response,
+					icons: [{
+					icon: lineSymbol,
+					offset: '100%',
+					repeat : '500px'
+						}]
+					});
+				polyline.setMap(map);
+				animateCircle(polyline);
+	
+	
+				function animateCircle(polyline) {
+					var count = 0;
+					window.setInterval(function() {
+					count = (count + 1) % 50;
+
+					var icons = polyline.get('icons');
+					icons[0].offset = (count / 2) + '%';
+					polyline.set('icons', icons);
+						}, 200);
+						};
+
+				taipei = new google.maps.DirectionsRenderer({
+                                              map             : map,
+                                              suppressMarkers : true,
+											  polylineOptions : polyline,
+											  suppressInfoWindows : false,
+											  preserveViewport : false,
+											  suppressPolylines: false,
+											  preserveViewport: false
+											  
+											  });
+				
+
+    // Add a "click" event for this route
+				
+				
+				
+				taipei.setDirections(response);				
+					var infowindow = new google.maps.InfoWindow();
+					var step = 1;
+					google.maps.event.addListener(polyline, "mouseover", function () {
+						infowindow.setContent(response.routes[0].legs[0].steps[step].distance.text + "<br>" + response.routes[0].legs[0].steps[step].duration.text + " ");
+						//infowindow.open(map);
+						$('.dir_final').css('background','lightgreen')
+					});
+					
+					google.maps.event.addListener(polyline, 'mouseout', function () {
+						infowindow.close();
+						$('.dir_final').css('background','#f2e5d4')
+					});
+				var dir = response.routes[0].legs[0]; // simplify our object for future reference.
+				}		
+			else {
+				window.alert('Directions request failed due to ' + status);
+      }
+	 
+    });
+
+	}
+  </script>
+			
+			<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+			<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+			<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+			<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC35ajFLVphL_1W-ZP3xKwVlgQxXNX_QYs&signed_in=true&libraries=places&callback=initMap&language=zh-TW"></script>
+			<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js" type="text/javascript"></script>
+  </body>
+</html>
+

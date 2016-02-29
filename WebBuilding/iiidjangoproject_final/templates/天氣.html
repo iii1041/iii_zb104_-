@@ -1,0 +1,66 @@
+<!doctype html>
+{% load staticfiles %}
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<style>
+			#a{
+			width:275px;
+			height:50px;
+			background:steelblue;
+			position:absolute;
+			right:-220px;
+			color:white;
+			text-align:left;
+			}
+			
+			#board{
+			top:50px;
+			width:225px;
+			height:150px;
+			background:steelblue;
+			padding:20px;
+			position:absolute;
+			right:-255px;
+		}
+		</style>
+		<script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+		<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+		<script>
+			$(document).ready(function(){				
+				$('#a').hover(
+					function(){
+						$('#board').stop().animate(
+							{right:'0px'},
+							1000,
+							'easeInSine'
+						);
+						$('#a').stop().animate(
+							{right:'-10px'},
+							1000,
+							'easeInSine'
+						);
+						$('#a').css('text-align','center')
+				},
+					function(){
+						$('#board').stop().animate({right:'-255px'},1500,'easeOutBounce');
+						$('#a').stop().animate({right:'-220px'},1500,'easeOutBounce');
+						$('#a').css('text-align','left')
+						
+				});
+			});
+		</script>
+		<title>jQuery</title>
+	</head>
+	<body>
+			
+			<aside id="board">
+				這裡顯示出天氣天氣
+			</aside>
+			<aside id="a">
+				天氣
+			</aside>
+
+	</body>
+</html>
